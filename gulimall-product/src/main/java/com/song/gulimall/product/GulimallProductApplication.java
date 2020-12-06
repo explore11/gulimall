@@ -1,9 +1,11 @@
 package com.song.gulimall.product;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("com.song.gulimall.product.dao")  // 告诉mybatis-plus的dao位置
 public class GulimallProductApplication {
 
     public static void main(String[] args) {
