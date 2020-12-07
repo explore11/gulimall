@@ -9,3 +9,5 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto  # mybatis-plus 全局设置主键自增
+server:
+  port: 6100

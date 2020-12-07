@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 public class GulimallProductApplicationTests {
     @Resource
     BrandService brandService;
-
+ 
     @Test
     public void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
