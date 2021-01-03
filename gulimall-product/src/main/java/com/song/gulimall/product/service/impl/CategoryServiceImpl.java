@@ -2,6 +2,7 @@ package com.song.gulimall.product.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,15 @@ import com.song.gulimall.product.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    /* *
+     * 批量逻辑删除
+     * @param catIds
+     */
+    @Override
+    public void removeBatchIds(Long[] catIds) {
+        baseMapper.deleteBatchIds(Arrays.asList(catIds));
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

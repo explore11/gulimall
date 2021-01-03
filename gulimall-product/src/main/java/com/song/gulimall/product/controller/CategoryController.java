@@ -18,9 +18,8 @@ import com.song.common.utils.PageUtils;
 import com.song.common.utils.R;
 
 
-/**
+/* *
  * 商品三级分类
- *
  * @author songwenqu
  * @email prefect_start@163.com
  * @date 2020-11-24 22:29:28
@@ -80,7 +79,9 @@ public class CategoryController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:category:delete")
     public R delete(@RequestBody Long[] catIds) {
-        categoryService.removeByIds(Arrays.asList(catIds));
+//        categoryService.removeByIds(Arrays.asList(catIds));
+        //批量逻辑删除
+        categoryService.removeBatchIds(catIds);
 
         return R.ok();
     }
