@@ -13,6 +13,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <description>所有项目的工具类、bean</description>
 
+
     <dependencies>
         <!--mybatis-plus-->
         <dependency>
@@ -60,9 +61,9 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.6.Final</version>
         </dependency>
     </dependencies>
 
