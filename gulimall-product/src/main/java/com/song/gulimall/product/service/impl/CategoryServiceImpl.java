@@ -2,10 +2,7 @@ package com.song.gulimall.product.service.impl;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,6 +18,36 @@ import com.song.gulimall.product.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+
+    /* *
+     * 根据分类id 获取分类的三级目录
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public Long[] getCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        this.getParentPath(catelogId, paths);
+        return paths.toArray(new Long[paths.size()]);
+    }
+
+
+    /* *
+     * 递归获取父路径
+     * @param catelogId
+     * @param paths
+     * @return
+     */
+    private List<Long> getParentPath(Long catelogId, List<Long> paths) {
+        paths.add(0, catelogId);
+        CategoryEntity categoryEntity = this.getById(catelogId);
+        Long parentCid = categoryEntity.getParentCid();
+        if (parentCid != 0) {
+            this.getParentPath(parentCid, paths);
+        }
+        return paths;
+    }
 
     /* *
      * 批量逻辑删除
