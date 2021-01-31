@@ -1,5 +1,7 @@
 package com.song.gulimall.product.service.impl;
 
+import com.song.gulimall.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,6 +21,16 @@ import com.song.gulimall.product.service.CategoryService;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
+
+    @Override
+    public void updateDetail(CategoryEntity category) {
+        this.updateById(category);
+
+        //修改品牌分类关系表中的分类的名称
+        categoryBrandRelationService.updateCategoryName(category.getCatId(),category.getName());
+    }
 
     /* *
      * 根据分类id 获取分类的三级目录
