@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.song.common.group.AddGroup;
 import com.song.common.group.ListValue;
 import com.song.common.group.UpdateGroup;
+import com.song.common.group.UpdateStatusGroup;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
@@ -50,19 +51,20 @@ public class BrandEntity implements Serializable {
     /**
      * 显示状态[0-不显示；1-显示]
      */
-    @ListValue(vals = {0, 1},message = "值为[0-不显示；1-显示]",groups = {AddGroup.class})
+    @ListValue(vals = {0, 1}, message = "值为[0-不显示；1-显示]", groups = {AddGroup.class, UpdateStatusGroup.class})
+    @NotNull(message = "不能为空")
     private Integer showStatus;
     /**
      * 检索首字母
      */
-    @Pattern(regexp = "^[a-zA-Z]$", message = "必须是一个字符",groups = {AddGroup.class})
-    @NotNull(message = "不能为空",groups = {AddGroup.class})
+    @Pattern(regexp = "^[a-zA-Z]$", message = "必须是一个字符", groups = {AddGroup.class})
+    @NotNull(message = "不能为空", groups = {AddGroup.class})
     private String firstLetter;
     /**
      * 排序
      */
-    @Min(value = 0, message = "必须是大于等于0",groups = {AddGroup.class})
-    @NotNull(message = "不能为空",groups = {AddGroup.class})
+    @Min(value = 0, message = "必须是大于等于0", groups = {AddGroup.class})
+    @NotNull(message = "不能为空", groups = {AddGroup.class})
     private Integer sort;
 
 }
