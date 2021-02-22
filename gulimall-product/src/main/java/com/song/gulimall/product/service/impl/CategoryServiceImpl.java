@@ -16,6 +16,7 @@ import com.song.common.utils.Query;
 import com.song.gulimall.product.dao.CategoryDao;
 import com.song.gulimall.product.entity.CategoryEntity;
 import com.song.gulimall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
@@ -25,9 +26,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
+    @Transactional
     public void updateDetail(CategoryEntity category) {
         this.updateById(category);
-
         //修改品牌分类关系表中的分类的名称
         categoryBrandRelationService.updateCategoryName(category.getCatId(),category.getName());
     }

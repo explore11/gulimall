@@ -7,11 +7,7 @@ import java.util.Map;
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.song.gulimall.product.entity.CategoryBrandRelationEntity;
 import com.song.gulimall.product.service.CategoryBrandRelationService;
@@ -46,7 +42,7 @@ public class CategoryBrandRelationController {
     /**
      * 列表
      */
-    @RequestMapping("/catelog/list")
+    @GetMapping("/catelog/list")
     public R catelogList(@RequestParam Long brandId) {
         List<CategoryBrandRelationEntity> data = categoryBrandRelationService.list(new QueryWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
         return R.ok().put("data", data);

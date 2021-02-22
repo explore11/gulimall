@@ -16,6 +16,7 @@ import com.song.common.utils.Query;
 import com.song.gulimall.product.dao.BrandDao;
 import com.song.gulimall.product.entity.BrandEntity;
 import com.song.gulimall.product.service.BrandService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("brandService")
@@ -39,6 +40,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
     }
 
     @Override
+    @Transactional
     public void updateDetail(BrandEntity brand) {
         this.updateById(brand);
         // 修改品牌分类关系表中的品牌的名称

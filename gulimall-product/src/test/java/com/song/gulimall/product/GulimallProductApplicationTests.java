@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,5 +55,19 @@ public class GulimallProductApplicationTests {
         brandService.save(brandEntity);
         System.out.println("成功。。。。。");
     }
+
+
+    @Test
+    public void test1() {
+        List<Long> list = new ArrayList<>();
+
+        for (Long i = 0L; i < 10L; i++) {
+            list.add(0, i);
+        }
+
+
+        System.out.println(Arrays.toString(list.toArray()));
+    }
+
 
 }
