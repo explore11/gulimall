@@ -14,7 +14,6 @@ public class AttrVo {
     /**
      * 属性id
      */
-    @TableId
     private Long attrId;
     /**
      * 属性名

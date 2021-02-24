@@ -4,6 +4,7 @@ import com.song.common.utils.PageUtils;
 import com.song.common.utils.R;
 import com.song.gulimall.product.entity.AttrEntity;
 import com.song.gulimall.product.service.AttrService;
+import com.song.gulimall.product.vo.AttrRespVo;
 import com.song.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,12 @@ public class AttrController {
     /**
      * 列表
      */
-    @GetMapping("/base/list/{catelogId}")
+    @GetMapping("/{attrType}/list/{catelogId}")
     //@RequiresPermissions("product:attr:list")
-    public R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId) {
-        PageUtils page = attrService.queryBaseAttrListPage(params,catelogId);
+    public R baseAttrList(@RequestParam Map<String, Object> params,
+                          @PathVariable("catelogId") Long catelogId,
+                          @PathVariable("attrType") String type) {
+        PageUtils page = attrService.queryBaseAttrListPage(params, catelogId,type);
         return R.ok().put("page", page);
     }
 
@@ -54,9 +57,9 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId) {
-        AttrEntity attr = attrService.getById(attrId);
-
-        return R.ok().put("attr", attr);
+//        AttrEntity attr = attrService.getById(attrId);
+        AttrRespVo attrRespVo = attrService.getAttrInfo(attrId);
+        return R.ok().put("attr", attrRespVo);
     }
 
     /**
@@ -75,8 +78,8 @@ public class AttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
+    public R update(@RequestBody AttrRespVo attrRespVo) {
+        attrService.updateAttr(attrRespVo);
 
         return R.ok();
     }
