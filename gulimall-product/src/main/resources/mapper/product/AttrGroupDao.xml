@@ -12,6 +12,12 @@
         <result property="icon" column="icon"/>
         <result property="catelogId" column="catelog_id"/>
     </resultMap>
+    <delete id="batchDeleteAttrGroupRelationAttr">
+        DELETE FROM pms_attr_attrgroup_relation WHERE
+        <foreach collection="attrGroupRespVoList" item="attrGroupRespVo" separator=" OR " open="(" close=")">
+            attr_id=#{attrGroupRespVo.attrId} and attr_group_id =#{attrGroupRespVo.attrGroupId}
+        </foreach>
+    </delete>
 
 
 </mapper>
