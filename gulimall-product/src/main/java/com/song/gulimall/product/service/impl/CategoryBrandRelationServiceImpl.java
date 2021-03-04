@@ -5,11 +5,13 @@ import com.song.gulimall.product.dao.BrandDao;
 import com.song.gulimall.product.dao.CategoryDao;
 import com.song.gulimall.product.entity.BrandEntity;
 import com.song.gulimall.product.entity.CategoryEntity;
+import com.song.gulimall.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,6 +33,10 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     BrandDao brandDao;
     @Resource
     CategoryDao categoryDao;
+    @Resource
+    CategoryBrandRelationDao categoryBrandRelationDao;
+    @Resource
+    BrandService brandService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -59,19 +65,32 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public void updateBrandName(Long brandId, String name) {
-        CategoryBrandRelationEntity categoryBrandRelationEntity =new CategoryBrandRelationEntity();
+        CategoryBrandRelationEntity categoryBrandRelationEntity = new CategoryBrandRelationEntity();
         categoryBrandRelationEntity.setBrandId(brandId);
         categoryBrandRelationEntity.setBrandName(name);
 
-        this.update(categoryBrandRelationEntity,new UpdateWrapper<CategoryBrandRelationEntity>().eq("brand_id",brandId));
+        this.update(categoryBrandRelationEntity, new UpdateWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
     }
 
 
     @Override
     public void updateCategoryName(Long catId, String name) {
-        CategoryBrandRelationEntity categoryBrandRelationEntity =new CategoryBrandRelationEntity();
+        CategoryBrandRelationEntity categoryBrandRelationEntity = new CategoryBrandRelationEntity();
         categoryBrandRelationEntity.setCatelogId(catId);
         categoryBrandRelationEntity.setCatelogName(name);
-        this.update(categoryBrandRelationEntity,new UpdateWrapper<CategoryBrandRelationEntity>().eq("catelog_id",catId));
+        this.update(categoryBrandRelationEntity, new UpdateWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+    }
+
+    @Override
+    public List<BrandEntity> getBrandsByCatId(Long catId) {
+        List<CategoryBrandRelationEntity> relationEntityList = categoryBrandRelationDao.selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+
+        List<BrandEntity> entityList = relationEntityList.stream().map((item) -> {
+            Long brandId = item.getBrandId();
+            BrandEntity brandEntity = brandService.getById(brandId);
+            return brandEntity;
+        }).collect(Collectors.toList());
+
+        return entityList;
     }
 }

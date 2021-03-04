@@ -2,6 +2,7 @@ package com.song.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.song.common.utils.PageUtils;
+import com.song.gulimall.product.entity.BrandEntity;
 import com.song.gulimall.product.entity.CategoryBrandRelationEntity;
 
 import java.util.List;
@@ -23,5 +24,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateBrandName(Long brandId, String name);
 
     void updateCategoryName(Long catId, String name);
+
+    List<BrandEntity> getBrandsByCatId(Long catId);
 }
 
