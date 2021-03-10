@@ -23,6 +23,7 @@ public class SkuLadderServiceImpl extends ServiceImpl<SkuLadderDao, SkuLadderEnt
                 new QueryWrapper<SkuLadderEntity>()
         );
 
+
         return new PageUtils(page);
     }
 

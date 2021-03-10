@@ -1,6 +1,7 @@
 package com.song.gulimall.coupon.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.song.common.to.SkuReductionInfoTo;
 import com.song.common.utils.PageUtils;
 import com.song.gulimall.coupon.entity.SpuBoundsEntity;
 
@@ -16,5 +17,8 @@ import java.util.Map;
 public interface SpuBoundsService extends IService<SpuBoundsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSkuReduction(SkuReductionInfoTo skuReductionInfoTo);
+
 }
 

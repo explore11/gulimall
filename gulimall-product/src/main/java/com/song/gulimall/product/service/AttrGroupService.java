@@ -5,6 +5,7 @@ import com.song.common.utils.PageUtils;
 import com.song.gulimall.product.entity.AttrEntity;
 import com.song.gulimall.product.entity.AttrGroupEntity;
 import com.song.gulimall.product.vo.AttrGroupRespVo;
+import com.song.gulimall.product.vo.AttrGroupWithAttrsVo;
 
 import java.util.List;
 import java.util.Map;
@@ -26,5 +27,6 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     void batchDeleteAttrGroupRelationAttr(List<AttrGroupRespVo> attrGroupRespVoList);
 
 
+    List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId);
 }
 
