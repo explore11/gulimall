@@ -3,6 +3,7 @@ package com.song.gulimall.product.controller;
 import com.song.common.utils.PageUtils;
 import com.song.common.utils.R;
 import com.song.gulimall.product.entity.AttrEntity;
+import com.song.gulimall.product.entity.ProductAttrValueEntity;
 import com.song.gulimall.product.service.AttrService;
 import com.song.gulimall.product.vo.AttrRespVo;
 import com.song.gulimall.product.vo.AttrVo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -29,6 +31,16 @@ public class AttrController {
     private AttrService attrService;
 
     /**
+     * 获取spu规格
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    //@RequiresPermissions("product:attr:list")
+    public R baseAttrListForSpu(@PathVariable("spuId") Long spuId) {
+        List<ProductAttrValueEntity> entityList = attrService.baseAttrListForSpu(spuId);
+        return R.ok().put("data", entityList);
+    }
+
+    /**
      * 列表
      */
     @GetMapping("/{attrType}/list/{catelogId}")
@@ -36,7 +48,7 @@ public class AttrController {
     public R baseAttrList(@RequestParam Map<String, Object> params,
                           @PathVariable("catelogId") Long catelogId,
                           @PathVariable("attrType") String type) {
-        PageUtils page = attrService.queryBaseAttrListPage(params, catelogId,type);
+        PageUtils page = attrService.queryBaseAttrListPage(params, catelogId, type);
         return R.ok().put("page", page);
     }
 
@@ -80,6 +92,14 @@ public class AttrController {
     //@RequiresPermissions("product:attr:update")
     public R update(@RequestBody AttrRespVo attrRespVo) {
         attrService.updateAttr(attrRespVo);
+
+        return R.ok();
+    }
+
+    @PostMapping("/update//{spuId}")
+    //@RequiresPermissions("product:attr:update")
+    public R updateBySpuId(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> productAttrValueEntityList) {
+        attrService.updateBySpuId(spuId,productAttrValueEntityList);
 
         return R.ok();
     }

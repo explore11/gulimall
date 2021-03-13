@@ -1,7 +1,14 @@
 package com.song.gulimall.ware.service.impl;
 
+import com.song.common.utils.R;
+import com.song.gulimall.ware.feign.ProductFeign;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,19 +18,62 @@ import com.song.common.utils.Query;
 import com.song.gulimall.ware.dao.WareSkuDao;
 import com.song.gulimall.ware.entity.WareSkuEntity;
 import com.song.gulimall.ware.service.WareSkuService;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
+    @Resource
+    WareSkuDao wareSkuDao;
+    @Autowired
+    ProductFeign productFeign;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+
+        QueryWrapper<WareSkuEntity> wrapper = new QueryWrapper<>();
+        String skuId = (String) params.get("skuId");
+        if (!StringUtils.isEmpty(skuId)) {
+            wrapper.eq("sku_id", skuId);
+        }
+
+        String wareId = (String) params.get("wareId");
+        if (!StringUtils.isEmpty(wareId)) {
+            wrapper.eq("ware_id", wareId);
+        }
+
         IPage<WareSkuEntity> page = this.page(
                 new Query<WareSkuEntity>().getPage(params),
-                new QueryWrapper<WareSkuEntity>()
+                wrapper
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void addStock(Long skuId, Long wareId, Integer skuNum) {
+        List<WareSkuEntity> skuEntityList = wareSkuDao.selectList(new QueryWrapper<WareSkuEntity>().eq("ware_id", wareId).eq("sku_id", skuId));
+        if (CollectionUtils.isEmpty(skuEntityList)) {
+            WareSkuEntity wareSkuEntity = new WareSkuEntity();
+            wareSkuEntity.setSkuId(skuId);
+            wareSkuEntity.setStock(skuNum);
+            wareSkuEntity.setWareId(wareId);
+            wareSkuEntity.setStockLocked(0);
+            R r = productFeign.info(skuId);
+            try {
+                if (r.getCode() == 0) {
+                    Map<String, Object> skuInfoMap = (Map<String, Object>) r.get("skuInfo");
+                    wareSkuEntity.setSkuName((String) skuInfoMap.get("skuName"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            wareSkuDao.insert(wareSkuEntity);
+        } else {
+            wareSkuDao.addStock(skuId, wareId, skuNum);
+        }
     }
 
 }

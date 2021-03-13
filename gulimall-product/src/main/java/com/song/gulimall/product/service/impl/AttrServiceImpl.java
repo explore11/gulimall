@@ -1,15 +1,15 @@
 package com.song.gulimall.product.service.impl;
 
 import com.song.common.utils.ProductConstant;
-import com.song.gulimall.product.dao.AttrAttrgroupRelationDao;
-import com.song.gulimall.product.dao.AttrGroupDao;
-import com.song.gulimall.product.dao.CategoryDao;
+import com.song.gulimall.product.dao.*;
 import com.song.gulimall.product.entity.*;
 import com.song.gulimall.product.service.CategoryService;
+import com.song.gulimall.product.service.ProductAttrValueService;
 import com.song.gulimall.product.vo.AttrRespVo;
 import com.song.gulimall.product.vo.AttrVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.song.common.utils.PageUtils;
 import com.song.common.utils.Query;
 
-import com.song.gulimall.product.dao.AttrDao;
 import com.song.gulimall.product.service.AttrService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -40,7 +39,10 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Resource
     AttrGroupDao attrGroupDao;
-
+    @Resource
+    ProductAttrValueDao productAttrValueDao;
+    @Autowired
+    ProductAttrValueService productAttrValueService;
 
     @Resource
     CategoryService categoryService;
@@ -193,6 +195,24 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             }
         }
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<ProductAttrValueEntity> baseAttrListForSpu(Long spuId) {
+        List<ProductAttrValueEntity> entityList = productAttrValueDao.selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
+        return entityList;
+    }
+
+    @Override
+    @Transactional
+    public void updateBySpuId(Long spuId, List<ProductAttrValueEntity> productAttrValueEntityList) {
+        //先删除 后增加
+        productAttrValueDao.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id",spuId));
+        List<ProductAttrValueEntity> entityList = productAttrValueEntityList.stream().map((productAttrValueEntity) -> {
+            productAttrValueEntity.setSpuId(spuId);
+            return productAttrValueEntity;
+        }).collect(Collectors.toList());
+        productAttrValueService.saveBatch(entityList);
     }
 
 }

@@ -3,9 +3,11 @@ package com.song.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.song.common.utils.PageUtils;
 import com.song.gulimall.product.entity.AttrEntity;
+import com.song.gulimall.product.entity.ProductAttrValueEntity;
 import com.song.gulimall.product.vo.AttrRespVo;
 import com.song.gulimall.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +30,10 @@ public interface AttrService extends IService<AttrEntity> {
     void updateAttr(AttrRespVo attrRespVo);
 
     PageUtils getNoAttrGroup(Long attrgroupId, Map<String, Object> params);
+
+    List<ProductAttrValueEntity> baseAttrListForSpu(Long spuId);
+
+    void updateBySpuId(Long spuId, List<ProductAttrValueEntity> productAttrValueEntityList);
 
 }
 
