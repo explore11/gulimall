@@ -1,26 +1,25 @@
 package com.song.gulimall.ware.service.impl;
 
-import com.song.common.utils.R;
-import com.song.gulimall.ware.feign.ProductFeign;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.song.common.to.HasStockVo;
 import com.song.common.utils.PageUtils;
 import com.song.common.utils.Query;
-
+import com.song.common.utils.R;
 import com.song.gulimall.ware.dao.WareSkuDao;
 import com.song.gulimall.ware.entity.WareSkuEntity;
+import com.song.gulimall.ware.feign.ProductFeign;
 import com.song.gulimall.ware.service.WareSkuService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("wareSkuService")
@@ -74,6 +73,19 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         } else {
             wareSkuDao.addStock(skuId, wareId, skuNum);
         }
+    }
+
+    @Override
+    public List<HasStockVo> hasStockBySkuIds(List<Long> skuIds) {
+        List<HasStockVo> collect = skuIds.stream().map((skuId) -> {
+            HasStockVo hasStockVo = new HasStockVo();
+            hasStockVo.setSkuId(skuId);
+            long count = this.baseMapper.hasStockBySkuId(skuId);
+            hasStockVo.setCount(count > 0);
+            return hasStockVo;
+        }).collect(Collectors.toList());
+
+        return collect;
     }
 
 }

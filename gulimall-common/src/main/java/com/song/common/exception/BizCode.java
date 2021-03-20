@@ -9,7 +9,8 @@ package com.song.common.exception;
 public enum BizCode {
 
     UN_KNOW_SYSTEM_EXCEPTION(10000, "未知的系统异常"),
-    VALID_ERROR_EXCEPTION(10001, "数据校验异常");
+    VALID_ERROR_EXCEPTION(10001, "数据校验异常"),
+    PRODUCT_UP_EXCEPTION(11000, "商品上架异常");
 
     private int code;
     private String msg;

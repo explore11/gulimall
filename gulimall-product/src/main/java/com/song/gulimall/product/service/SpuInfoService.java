@@ -1,10 +1,12 @@
 package com.song.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.song.common.to.es.SkuEsModel;
 import com.song.common.utils.PageUtils;
 import com.song.gulimall.product.entity.SpuInfoEntity;
 import com.song.gulimall.product.vo.spu.SpuInfoVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +25,8 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
     void saveBaseSpuInfo(SpuInfoEntity spuInfoEntity);
 
     PageUtils queryInfoPage(Map<String, Object> params);
+
+    void skuUp(Long spuId);
+
 }
 

@@ -215,4 +215,10 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         productAttrValueService.saveBatch(entityList);
     }
 
+    @Override
+    public List<Long> getAttrIdBySearch(List<Long> productAttrIds) {
+        List<AttrEntity> list = this.list(new QueryWrapper<AttrEntity>().in("attr_id", productAttrIds).eq("search_type", 1));
+        return list.stream().map(AttrEntity::getAttrId).collect(Collectors.toList());
+    }
+
 }

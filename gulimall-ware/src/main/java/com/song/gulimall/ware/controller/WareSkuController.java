@@ -1,26 +1,23 @@
 package com.song.gulimall.ware.controller;
 
+import com.song.common.to.HasStockVo;
+import com.song.common.utils.PageUtils;
+import com.song.common.utils.R;
+import com.song.gulimall.ware.entity.WareSkuEntity;
+import com.song.gulimall.ware.service.WareSkuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.song.gulimall.ware.entity.WareSkuEntity;
-import com.song.gulimall.ware.service.WareSkuService;
-import com.song.common.utils.PageUtils;
-import com.song.common.utils.R;
 
 
 
 /**
  * 商品库存
- *
  * @author songwenqu
  * @email prefect_start@163.com
  * @date 2020-12-07 22:59:07
@@ -30,6 +27,19 @@ import com.song.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+
+    /**
+     * 根据skuIds查询是否有库存
+     */
+    @PostMapping("/hasStockBySkuIds")
+    //@RequiresPermissions("ware:waresku:list")
+    public R hasStockBySkuIds(@RequestBody List<Long> skuIds){
+        List<HasStockVo> hasStockVoList = wareSkuService.hasStockBySkuIds(skuIds);
+        return R.ok().put("data", hasStockVoList);
+    }
+
+
 
     /**
      * 列表

@@ -1,16 +1,14 @@
 package com.song.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.song.common.to.es.SkuEsModel;
 import com.song.gulimall.product.vo.spu.SpuInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.song.gulimall.product.entity.SpuInfoEntity;
 import com.song.gulimall.product.service.SpuInfoService;
@@ -30,6 +28,17 @@ import com.song.common.utils.R;
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
+
+    /**
+     * 上架
+     */
+    @PostMapping("/{spuId}/up")
+    //@RequiresPermissions("product:spuinfo:list")
+    public R skuUp(@PathVariable("spuId") Long spuId) {
+         spuInfoService.skuUp(spuId);
+
+        return R.ok();
+    }
 
 
     /**
