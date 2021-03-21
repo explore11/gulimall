@@ -1,6 +1,8 @@
 package com.song.gulimall.product.service.impl;
 
 import com.song.gulimall.product.service.CategoryBrandRelationService;
+import com.song.gulimall.product.vo.Catalog2Vo;
+import com.song.gulimall.product.vo.Catalog3Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import com.song.gulimall.product.dao.CategoryDao;
 import com.song.gulimall.product.entity.CategoryEntity;
 import com.song.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("categoryService")
@@ -30,7 +33,46 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void updateDetail(CategoryEntity category) {
         this.updateById(category);
         //修改品牌分类关系表中的分类的名称
-        categoryBrandRelationService.updateCategoryName(category.getCatId(),category.getName());
+        categoryBrandRelationService.updateCategoryName(category.getCatId(), category.getName());
+    }
+
+    @Override
+    public List<CategoryEntity> getCategoryOneLevel() {
+        return this.baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+    }
+
+    @Override
+    public Map<Long, List<Catalog2Vo>> getCatalogJson() {
+        //获取一级分类
+        List<CategoryEntity> categoryOneLevel = this.getCategoryOneLevel();
+        // 组装结果返回
+        Map<Long, List<Catalog2Vo>> map = categoryOneLevel.stream().collect(Collectors.toMap(CategoryEntity::getCatId, (categoryEntity) -> {
+            List<Catalog2Vo> catalog2VoList = new ArrayList<>();
+
+            // 获取二级分类
+            List<CategoryEntity> categoryEntityTwoList = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", categoryEntity.getCatId()));
+            // 非空判断
+            if (!CollectionUtils.isEmpty(categoryEntityTwoList)) {
+                for (CategoryEntity entityTwo : categoryEntityTwoList) {
+                    Catalog2Vo catalog2Vo = null;
+                    // 获取三级分类
+                    List<CategoryEntity> categoryEntityThreeList = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", entityTwo.getCatId()));
+
+                    if (!CollectionUtils.isEmpty(categoryEntityThreeList)) {
+                        List<Catalog3Vo> catalog3VoList = categoryEntityThreeList.stream().map((categoryEntityThree) -> {
+                            return new Catalog3Vo(entityTwo.getCatId().toString(), categoryEntityThree.getCatId().toString(), categoryEntityThree.getName());
+                        }).collect(Collectors.toList());
+
+                        // 二级分类的出参
+                        catalog2Vo = new Catalog2Vo(categoryEntity.getCatId().toString(), catalog3VoList, entityTwo.getCatId().toString(), entityTwo.getName());
+                        // 添加到二级分类列表
+                        catalog2VoList.add(catalog2Vo);
+                    }
+                }
+            }
+            return catalog2VoList;
+        }));
+        return map;
     }
 
     /* *
