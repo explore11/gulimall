@@ -38,8 +38,8 @@ public class GulimallExceptionControllerAdvice {
     }
 
 
-    @ExceptionHandler(value = Throwable.class)
-    public R handleException(Throwable throwable) {
-        return R.error(BizCode.UN_KNOW_SYSTEM_EXCEPTION.getCode(), BizCode.UN_KNOW_SYSTEM_EXCEPTION.getMsg());
-    }
+//    @ExceptionHandler(value = Throwable.class)
+//    public R handleException(Throwable throwable) {
+//        return R.error(BizCode.UN_KNOW_SYSTEM_EXCEPTION.getCode(), BizCode.UN_KNOW_SYSTEM_EXCEPTION.getMsg());
+//    }
 }

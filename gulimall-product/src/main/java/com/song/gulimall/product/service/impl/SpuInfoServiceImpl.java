@@ -1,5 +1,6 @@
 package com.song.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,6 +29,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,7 +61,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     AttrService attrService;
     @Resource
     WareFeignService wareFeignService;
-
     @Resource
     SearchFeignService searchFeignService;
 
@@ -229,8 +230,21 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // 库存查询  //需要一个请求成功的判断
         R r = wareFeignService.hasStockBySkuIds(skuIds);
-        List<HasStockVo> hasStockVoList = (List<HasStockVo>) r.get("data");
+
+        String jsonString = JSON.toJSONString(r.get("data"));
+        List<HasStockVo> hasStockVoList = JSON.parseArray(jsonString, HasStockVo.class);
+
+//        Map<Long,Boolean> map =new HashMap<Long,Boolean>();
+//        for (HasStockVo hasStockVo : hasStockVos) {
+//            Long skuId = hasStockVo.getSkuId();
+//            Boolean count = hasStockVo.getCount();
+//            map.put(skuId,count);
+//        }
+//        System.out.println(map);
+
         Map<Long, Boolean> stockMap = hasStockVoList.stream().collect(Collectors.toMap(HasStockVo::getSkuId, HasStockVo::getCount));
+
+
 
         // 封装每个sku信息
         List<SkuEsModel> esModelList = skuInfoEntityList.stream().map((sku) -> {
@@ -241,7 +255,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             skuEsModel.setSkuImg(sku.getSkuDefaultImg());
 
             //库存  TODO 查询库存服务
-            skuEsModel.setHasStock(stockMap.get(sku));
+            if (stockMap == null) {
+                skuEsModel.setHasStock(true);
+            } else {
+                skuEsModel.setHasStock(stockMap.get(sku));
+            }
 
             // 热点 暂时给一个默认值
             skuEsModel.setHotScore(0L);

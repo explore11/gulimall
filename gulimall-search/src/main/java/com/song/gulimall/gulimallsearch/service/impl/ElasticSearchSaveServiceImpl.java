@@ -51,6 +51,6 @@ public class ElasticSearchSaveServiceImpl implements ElasticSearchSaveService {
 //        List<String> strings = Arrays.stream(bulkResponse.getItems()).map(BulkItemResponse::getId).collect(Collectors.toList());
         boolean hasFailures = bulkResponse.hasFailures();
 
-        return hasFailures;
+        return !hasFailures;
     }
 }
