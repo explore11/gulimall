@@ -1,12 +1,17 @@
 package com.song.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.song.gulimall.product.service.CategoryBrandRelationService;
 import com.song.gulimall.product.vo.Catalog2Vo;
 import com.song.gulimall.product.vo.Catalog3Vo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,12 +26,16 @@ import com.song.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     @Transactional
@@ -41,8 +50,58 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return this.baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
     }
 
+
     @Override
     public Map<Long, List<Catalog2Vo>> getCatalogJson() {
+
+        String catalogJson = stringRedisTemplate.opsForValue().get("CatalogJson");
+
+        if (StringUtils.isEmpty(catalogJson)) {
+            //获取一级分类
+            synchronized (this) {
+                 // 加锁解决缓存穿透的问题
+                List<CategoryEntity> categoryOneLevel = this.getCategoryOneLevel();
+                // 组装结果返回
+                Map<Long, List<Catalog2Vo>> map = categoryOneLevel.stream().collect(Collectors.toMap(CategoryEntity::getCatId, (categoryEntity) -> {
+                    List<Catalog2Vo> catalog2VoList = new ArrayList<>();
+
+                    // 获取二级分类
+                    List<CategoryEntity> categoryEntityTwoList = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", categoryEntity.getCatId()));
+                    // 非空判断
+                    if (!CollectionUtils.isEmpty(categoryEntityTwoList)) {
+                        for (CategoryEntity entityTwo : categoryEntityTwoList) {
+                            Catalog2Vo catalog2Vo = null;
+                            // 获取三级分类
+                            List<CategoryEntity> categoryEntityThreeList = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", entityTwo.getCatId()));
+
+                            if (!CollectionUtils.isEmpty(categoryEntityThreeList)) {
+                                List<Catalog3Vo> catalog3VoList = categoryEntityThreeList.stream().map((categoryEntityThree) -> {
+                                    return new Catalog3Vo(entityTwo.getCatId().toString(), categoryEntityThree.getCatId().toString(), categoryEntityThree.getName());
+                                }).collect(Collectors.toList());
+
+                                // 二级分类的出参
+                                catalog2Vo = new Catalog2Vo(categoryEntity.getCatId().toString(), catalog3VoList, entityTwo.getCatId().toString(), entityTwo.getName());
+                                // 添加到二级分类列表
+                                catalog2VoList.add(catalog2Vo);
+                            }
+                        }
+                    }
+                    return catalog2VoList;
+                }));
+
+                // 存到缓存中
+                String s = JSON.toJSONString(map);
+                // 设置不通的时间返回缓存雪崩的问题
+                stringRedisTemplate.opsForValue().set("CatalogJson", s, 1, TimeUnit.DAYS);
+                return map;
+            }
+        }
+
+        return JSON.parseObject(catalogJson, new TypeReference<Map<Long, List<Catalog2Vo>>>() {
+        });
+    }
+
+    public Map<Long, List<Catalog2Vo>> getCatalogJsonFromDb() {
         //获取一级分类
         List<CategoryEntity> categoryOneLevel = this.getCategoryOneLevel();
         // 组装结果返回
