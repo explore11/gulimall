@@ -4,6 +4,7 @@ import com.song.gulimall.product.entity.BrandEntity;
 import com.song.gulimall.product.service.BrandService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,15 +36,20 @@ public class GulimallProductApplicationTests {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    RedissonClient redissonClient;
 
+    @Test
+    public void testredissonClient() {
+        System.out.println(redissonClient);
+    }
 
     @Test
     public void testRedis() {
-        stringRedisTemplate.opsForValue().set("hello","world"+ UUID.randomUUID().toString());
+        stringRedisTemplate.opsForValue().set("hello", "world" + UUID.randomUUID().toString());
 
         System.out.println(stringRedisTemplate.opsForValue().get("hello"));
     }
-
 
 
 //    @Test

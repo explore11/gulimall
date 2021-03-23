@@ -7,6 +7,7 @@ import com.song.gulimall.product.vo.Catalog2Vo;
 import com.song.gulimall.product.vo.Catalog3Vo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
+    @Cacheable(value = {"category"},key = "#root.method.name")
     public List<CategoryEntity> getCategoryOneLevel() {
         return this.baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
     }
@@ -54,6 +56,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<Long, List<Catalog2Vo>> getCatalogJson() {
+        List<CategoryEntity> categoryOneLevel = this.getCategoryOneLevel();
+        // 组装结果返回
+        return getCatalogListMapWithRedisLock(categoryOneLevel);
+    }
+
+
+    public Map<Long, List<Catalog2Vo>> getCatalogJsonFenBuShi() {
 
         String catalogJson = stringRedisTemplate.opsForValue().get("CatalogJson");
         if (StringUtils.isEmpty(catalogJson)) {
@@ -88,7 +97,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 return map;
             } else {
                 // 获取失败 从新执行
-                getCatalogJson();
+                getCatalogJsonFenBuShi();
             }
         }
 
@@ -159,7 +168,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         String catalogJson = stringRedisTemplate.opsForValue().get("CatalogJson");
 
         if (StringUtils.isEmpty(catalogJson)) {
-            //获取一级分类
+//获取一级分类
             synchronized (this) {
                 // 加锁解决缓存穿透的问题
                 List<CategoryEntity> categoryOneLevel = this.getCategoryOneLevel();
