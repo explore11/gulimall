@@ -7,5 +7,6 @@ package com.song.gulimall.gulimallsearch.constant;
  * @create: 2021-03-20 21:48
  **/
 public class ElasticSearchConstant {
-    public static final String PRODUCT_INDEX = "product";
+    public static final String PRODUCT_INDEX = "gulimall_product";
+    public static final Integer PRODUCT_PAGE_SIZE = 2;
 }
