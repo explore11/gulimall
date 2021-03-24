@@ -25,3 +25,8 @@
 #      id-type: auto  # mybatis-plus 全局设置主键自增
 #server:
 #  port: 6100
+#gulimall:
+#  thread:
+#    core-size: 20
+#    keep-alive-time: 10
+#    max-size: 200
