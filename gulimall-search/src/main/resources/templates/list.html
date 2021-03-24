@@ -1040,9 +1040,9 @@
                     <!--综合排序-->
                     <div class="filter_top">
                         <div class="filter_top_left">
-                            <a href="#">综合排序</a>
-                            <a href="#">销量</a>
-                            <a href="#">价格</a>
+                            <a class="sort_a" sort="hotScore" href="#">综合排序</a>
+                            <a class="sort_a" sort="saleCount" href="#">销量</a>
+                            <a class="sort_a" sort="skuPrice" href="#">价格</a>
                             <a href="#">评论分</a>
                             <a href="#">上架时间</a>
                         </div>
@@ -1998,20 +1998,66 @@
 
     $(".page_a").click(function () {
         let pn = $(this).attr("pn");
-        if(location.href.indexOf("pageNum")!=-1){
+        if (location.href.indexOf("pageNum") != -1) {
             // 替换
-            replaceParamVal(location.href,"pageNum",pn);
-        }else {
+            replaceParamVal(location.href, "pageNum", pn);
+        } else {
             location.href = location.href + "&pageNum=" + pn;
         }
         return false;
     });
 
-    function replaceParamVal(url,paramName,replaceVal) {
-        var  oUrl=url.toString();
-        var  re=eval('/('+paramName+'=)([^&*)/gi');
-        let nurl = oUrl.replace(re,paramName+'='+replaceVal);
-        return nurl;
+
+    function replaceAndParamVal(url, paramName, replaceVal) {
+        var oUrl = url.toString();
+        if (oUrl.indexOf(paramName) != -1) {
+            var re = eval('/(' + paramName + '=)([^&*)/gi');
+            let nurl = oUrl.replace(re, paramName + '=' + replaceVal);
+            return nurl;
+        } else {
+            var nUrl = "";
+            if (oUrl.indexOf("?") != -1) {
+                nUrl = oUrl + "&" + paramName + "=" + replaceVal;
+            } else {
+                nUrl = oUrl + "?" + paramName + "=" + replaceVal;
+            }
+            return nUrl;
+        }
+
+
+    }
+
+    $(".sort_a").click(function () {
+        //当前点击的元素变成选中状态
+        changeStyle(this);
+
+        //跳转地址
+        var sort = $(this).attr("sort");
+        sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
+        location.href = replaceAndParamVal(location.href, "sort", sort);
+        return false;
+    });
+
+    function changeStyle(ele) {
+        $(".sort_a").css({"color": "#333", "border-color": "#CCC", "background": "#FFF"});
+        $(".sort_a").each(function () {
+            var text = $(this).text().replace("↓", "").replace("↑", "");
+            $(this).text(text);
+        });
+        $(ele).css({"color": "#FFF", "border-color": "#e4393c", "background": "#e4393c"});
+        // 改变升降序
+        $(ele).toggleClass("desc");
+        if ($(ele).hasClass("desc")) {
+            // 降序
+            var text = $(ele).text().replace("↓", "").replace("↑", "");
+            text = text + "↓";
+            $(ele).text(text);
+        } else {
+            // 升序
+            var text = $(ele).text().replace("↓", "").replace("↑", "");
+            text = text + "↑";
+            $(ele).text(text);
+        }
     }
 
 </script>

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /* *
  * @program: gulimall
@@ -21,8 +22,10 @@ public class SearchController {
     MallSearchService mallSearchService;
 
     @GetMapping("/list.html")
-    public String listPage(SearchParam searchParam, Model model) {
-        SearchResult result = mallSearchService.search(searchParam);
+    public String listPage(SearchParam param, Model model, HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        param.set_queryString(queryString);
+        SearchResult result = mallSearchService.search(param);
         model.addAttribute("result", result);
         return "list";
     }

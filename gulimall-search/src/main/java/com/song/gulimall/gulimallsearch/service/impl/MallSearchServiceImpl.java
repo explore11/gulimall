@@ -1,10 +1,14 @@
 package com.song.gulimall.gulimallsearch.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.song.common.to.es.SkuEsModel;
+import com.song.common.utils.R;
 import com.song.gulimall.gulimallsearch.config.ElasticSearchConfig;
 import com.song.gulimall.gulimallsearch.constant.ElasticSearchConstant;
+import com.song.gulimall.gulimallsearch.feign.ProductFeignService;
 import com.song.gulimall.gulimallsearch.service.MallSearchService;
+import com.song.gulimall.gulimallsearch.vo.AttrResponseVo;
 import com.song.gulimall.gulimallsearch.vo.SearchParam;
 import com.song.gulimall.gulimallsearch.vo.SearchResult;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +34,12 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +56,8 @@ public class MallSearchServiceImpl implements MallSearchService {
 
     @Resource
     private RestHighLevelClient esRestClient;
+    @Resource
+    private ProductFeignService productFeignService;
 
     @Override
     public SearchResult search(SearchParam param) {
@@ -191,40 +198,39 @@ public class MallSearchServiceImpl implements MallSearchService {
 
 
         //6、构建面包屑导航
-//        if (param.getAttrs() != null && param.getAttrs().size() > 0) {
-//            List<SearchResult.NavVo> collect = param.getAttrs().stream().map(attr -> {
-//                //1、分析每一个attrs传过来的参数值
-//                SearchResult.NavVo navVo = new SearchResult.NavVo();
-//                String[] s = attr.split("_");
-//                navVo.setNavValue(s[1]);
-//                R r = productFeignService.attrInfo(Long.parseLong(s[0]));
-//                if (r.getCode() == 0) {
-//                    AttrResponseVo data = r.getData("attr", new TypeReference<AttrResponseVo>() {
-//                    });
-//                    navVo.setNavName(data.getAttrName());
-//                } else {
-//                    navVo.setNavName(s[0]);
-//                }
-//
-//                //2、取消了这个面包屑以后，我们要跳转到哪个地方，将请求的地址url里面的当前置空
-//                //拿到所有的查询条件，去掉当前
-//                String encode = null;
-//                try {
-//                    encode = URLEncoder.encode(attr, "UTF-8");
-//                    encode.replace("+", "%20");  //浏览器对空格的编码和Java不一样，差异化处理
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
-//                String replace = param.get_queryString().replace("&attrs=" + attr, "");
-//                navVo.setLink("http://search.gulimall.com/list.html?" + replace);
-//
-//                return navVo;
-//            }).collect(Collectors.toList());
-//
-//            result.setNavs(collect);
-//        }
+        if (param.getAttrs() != null && param.getAttrs().size() > 0) {
+            List<SearchResult.NavVo> collect = param.getAttrs().stream().map(attr -> {
+                //1、分析每一个attrs传过来的参数值
+                SearchResult.NavVo navVo = new SearchResult.NavVo();
+                String[] s = attr.split("_");
+                navVo.setNavValue(s[1]);
+                R r = productFeignService.attrInfo(Long.parseLong(s[0]));
+                if (r.getCode() == 0) {
+                    AttrResponseVo data = r.getData("attr", new TypeReference<AttrResponseVo>() {
+                    });
+                    navVo.setNavName(data.getAttrName());
+                } else {
+                    navVo.setNavName(s[0]);
+                }
 
+                //2、取消了这个面包屑以后，我们要跳转到哪个地方，将请求的地址url里面的当前置空
+                //拿到所有的查询条件，去掉当前
+                String encode = null;
+                try {
+                    encode = URLEncoder.encode(attr, "UTF-8");
+                    encode.replace("+", "%20");  //浏览器对空格的编码和Java不一样，差异化处理
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String replace = param.get_queryString().replace("&attrs=" + attr, "");
+                navVo.setLink("http://search.gulimall.com/list.html?" + replace);
 
+                return navVo;
+            }).collect(Collectors.toList());
+
+            result.setNavs(collect);
+        }
+        
         return result;
     }
 
