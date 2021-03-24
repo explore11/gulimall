@@ -3,6 +3,7 @@ package com.song.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.song.common.utils.PageUtils;
 import com.song.gulimall.product.entity.SkuSaleAttrValueEntity;
+import com.song.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.song.gulimall.product.vo.spu.Attr;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public interface SkuSaleAttrValueService extends IService<SkuSaleAttrValueEntity
 
     void saveSkuSaleAttrValue(Long skuId, List<Attr> skuAttrList);
 
+    List<SkuItemSaleAttrVo> geSkuSaleAttr(Long spuId);
 }
 

@@ -3,6 +3,7 @@ package com.song.gulimall.product.service.impl;
 import com.song.gulimall.product.dao.AttrDao;
 import com.song.gulimall.product.entity.AttrEntity;
 import com.song.gulimall.product.service.AttrService;
+import com.song.gulimall.product.vo.SpuItemAttrGroupVo;
 import com.song.gulimall.product.vo.spu.BaseAttrs;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 
     @Resource
     AttrDao attrDao;
+    @Resource
+    ProductAttrValueDao productAttrValueDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -61,6 +64,12 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     public List<ProductAttrValueEntity> getProductAttrValue(Long spuId) {
         List<ProductAttrValueEntity> entityList = this.list(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
         return entityList;
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getProductGroupBySpuId(Long spuId, Long catalogId) {
+        List<SpuItemAttrGroupVo> groupVoList = productAttrValueDao.getProductGroupBySpuId(spuId, catalogId);
+        return groupVoList;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.song.gulimall.product.service.impl;
 
+import com.song.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.song.gulimall.product.vo.spu.Attr;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,13 @@ import com.song.gulimall.product.entity.SkuSaleAttrValueEntity;
 import com.song.gulimall.product.service.SkuSaleAttrValueService;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+
 
 @Service("skuSaleAttrValueService")
 public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao, SkuSaleAttrValueEntity> implements SkuSaleAttrValueService {
+    @Resource
+    SkuSaleAttrValueDao skuSaleAttrValueDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -46,6 +51,12 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
             this.saveBatch(skuValeAttrValueEntities);
         }
 
+    }
+
+    @Override
+    public List<SkuItemSaleAttrVo> geSkuSaleAttr(Long spuId) {
+        List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueDao.geSkuSaleAttr(spuId);
+        return saleAttrVos;
     }
 
 }

@@ -1,7 +1,11 @@
 package com.song.gulimall.product;
 
+import com.song.gulimall.product.dao.ProductAttrValueDao;
+import com.song.gulimall.product.dao.SkuSaleAttrValueDao;
 import com.song.gulimall.product.entity.BrandEntity;
 import com.song.gulimall.product.service.BrandService;
+import com.song.gulimall.product.vo.SkuItemSaleAttrVo;
+import com.song.gulimall.product.vo.SpuItemAttrGroupVo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.redisson.api.RedissonClient;
@@ -21,7 +25,8 @@ import java.util.UUID;
 public class GulimallProductApplicationTests {
     @Resource
     BrandService brandService;
-
+    @Resource
+    ProductAttrValueDao productAttrValueDao;
     @Value("${oss.accessKeyId}")
     private String accessKeyId;
 
@@ -39,10 +44,24 @@ public class GulimallProductApplicationTests {
     @Resource
     RedissonClient redissonClient;
 
+    @Resource
+    SkuSaleAttrValueDao skuSaleAttrValueDao;
+
     @Test
     public void testredissonClient() {
         System.out.println(redissonClient);
     }
+
+    @Test
+    public void Test09() {
+//        List<SpuItemAttrGroupVo> productGroupBySpuId = productAttrValueDao.getProductGroupBySpuId(15L, 225L);
+//        System.out.println(productGroupBySpuId);
+
+        List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueDao.geSkuSaleAttr(15L);
+        System.out.println(saleAttrVos);
+
+    }
+
 
     @Test
     public void testRedis() {
