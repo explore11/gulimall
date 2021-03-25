@@ -4,7 +4,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.song.common.exception.BizCode;
+import com.song.gulimall.member.exception.PhoneNumExistException;
+import com.song.gulimall.member.exception.UserExistException;
 import com.song.gulimall.member.feign.CouponServiceFeign;
+import com.song.gulimall.member.vo.MemberRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +33,22 @@ public class MemberController {
 
     @Autowired
     private CouponServiceFeign couponServiceFeign;
+
+    /* *
+     * 注册会员
+     * @return
+     */
+    @PostMapping("/register")
+    public R register(@RequestBody MemberRegisterVo registerVo) {
+        try {
+            memberService.register(registerVo);
+        } catch (UserExistException userException) {
+            return R.error(BizCode.USER_EXIST_EXCEPTION.getCode(), BizCode.USER_EXIST_EXCEPTION.getMsg());
+        } catch (PhoneNumExistException phoneException) {
+            return R.error(BizCode.PHONE_EXIST_EXCEPTION.getCode(), BizCode.PHONE_EXIST_EXCEPTION.getMsg());
+        }
+        return R.ok();
+    }
 
 
     @GetMapping("/couponServiceFeignList")

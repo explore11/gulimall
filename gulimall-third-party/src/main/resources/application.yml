@@ -7,3 +7,11 @@
 #    name: gulimall-third-party
 #server:
 #  port: 30000
+#
+#gulimall:
+#  sms:
+#    sms-access-key-id: xxx
+#    sms-access-key-secret: xxxx
+#    sms-endpoint: dysmsapi.aliyuncs.com
+#    sms-template-code: xxx
+#    sms-sign-name: xxx

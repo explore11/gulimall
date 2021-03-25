@@ -2,12 +2,14 @@ package com.song.gulimall.gulimallthirdparty;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.song.gulimall.gulimallthirdparty.utils.SmsComponent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -28,6 +30,18 @@ public class GulimallThirdPartyApplicationTests {
     @Value("${oss.bucket}")
     private String bucket;
 
+
+
+    @Resource
+    SmsComponent smsComponent;
+
+    @Test
+    public void test2() throws Exception {
+        smsComponent.sendCode("xxxx","12334");
+        System.out.println(".....");
+    }
+
+
     @Test
     public void test1() throws FileNotFoundException {
         // Endpoint以杭州为例，其它Region请按实际情况填写。
@@ -44,5 +58,6 @@ public class GulimallThirdPartyApplicationTests {
 
         System.out.println("上传完成了.....");
     }
+
 
 }
