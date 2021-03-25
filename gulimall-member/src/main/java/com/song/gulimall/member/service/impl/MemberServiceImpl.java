@@ -4,12 +4,14 @@ import com.song.gulimall.member.entity.MemberLevelEntity;
 import com.song.gulimall.member.exception.PhoneNumExistException;
 import com.song.gulimall.member.exception.UserExistException;
 import com.song.gulimall.member.service.MemberLevelService;
+import com.song.gulimall.member.vo.MemberLoginVo;
 import com.song.gulimall.member.vo.MemberRegisterVo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -67,6 +69,27 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         // 4 保存用户信息
         this.save(entity);
+    }
+
+    /* *
+     * 登录
+     * @param loginVo
+     * @return
+     */
+    @Override
+    public MemberEntity login(MemberLoginVo loginVo) {
+        String loginAccount = loginVo.getLoginAccount();
+        //以用户名或电话号登录的进行查询
+        MemberEntity entity = this.getOne(new QueryWrapper<MemberEntity>().eq("username", loginAccount).or().eq("mobile", loginAccount));
+        if (entity != null) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            boolean matches = bCryptPasswordEncoder.matches(loginVo.getPassword(), entity.getPassword());
+            if (matches) {
+                entity.setPassword("");
+                return entity;
+            }
+        }
+        return null;
     }
 
     private void checkUserNameUnique(String userName) {

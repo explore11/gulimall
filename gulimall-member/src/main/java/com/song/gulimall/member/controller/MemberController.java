@@ -8,6 +8,7 @@ import com.song.common.exception.BizCode;
 import com.song.gulimall.member.exception.PhoneNumExistException;
 import com.song.gulimall.member.exception.UserExistException;
 import com.song.gulimall.member.feign.CouponServiceFeign;
+import com.song.gulimall.member.vo.MemberLoginVo;
 import com.song.gulimall.member.vo.MemberRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,23 @@ public class MemberController {
 
     @Autowired
     private CouponServiceFeign couponServiceFeign;
+
+
+    /* *
+     * 登录
+     * @param loginVo
+     * @return
+     */
+    @RequestMapping("/login")
+    public R login(@RequestBody MemberLoginVo loginVo) {
+        MemberEntity entity = memberService.login(loginVo);
+        if (entity != null) {
+            return R.ok().put("memberEntity", entity);
+        } else {
+            return R.error(BizCode.LOGINACCT_PASSWORD_EXCEPTION.getCode(), BizCode.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
+
 
     /* *
      * 注册会员

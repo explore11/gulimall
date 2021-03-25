@@ -1,10 +1,14 @@
 package com.song.gulimall.gulimallauthserver.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.song.common.exception.BizCode;
 import com.song.common.utils.AuthServerConstant;
 import com.song.common.utils.R;
+import com.song.common.vo.MemberResponseVo;
 import com.song.gulimall.gulimallauthserver.feign.MemberFeignService;
 import com.song.gulimall.gulimallauthserver.feign.ThirdPartyFeignService;
+import com.song.gulimall.gulimallauthserver.vo.UserLoginVo;
 import com.song.gulimall.gulimallauthserver.vo.UserRegisterVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -13,13 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +71,39 @@ public class LoginController {
     }
 
 
+    /* *
+     * 登录
+     * @param vo
+     * @param attributes
+     * @param session
+     * @return
+     */
+    @RequestMapping("/login")
+    public String login(UserLoginVo vo, RedirectAttributes attributes, HttpSession session){
+        R r = memberFeignService.login(vo);
+        if (r.getCode() == 0) {
+            String jsonString = JSON.toJSONString(r.get("memberEntity"));
+            MemberResponseVo memberResponseVo = JSON.parseObject(jsonString, new TypeReference<MemberResponseVo>() {
+            });
+            session.setAttribute(AuthServerConstant.LOGIN_USER, memberResponseVo);
+            return "redirect:http://gulimall.com/";
+        }else {
+            String msg = (String) r.get("msg");
+            Map<String, String> errors = new HashMap<>();
+            errors.put("msg", msg);
+            attributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.gulimall.com/login.html";
+        }
+    }
+
+
+    /* *
+     * 注册
+     * @param registerVo
+     * @param result
+     * @param attributes
+     * @return
+     */
     @PostMapping("/register")
     public String register(@Valid UserRegisterVo registerVo, BindingResult result, RedirectAttributes attributes) {
         //1.判断校验是否通过
