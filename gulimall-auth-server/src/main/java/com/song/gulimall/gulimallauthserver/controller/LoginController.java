@@ -146,4 +146,19 @@ public class LoginController {
             }
         }
     }
+
+
+    /* *
+     * 已登录的自动跳回首页
+     * @param session
+     * @return
+     */
+    @RequestMapping("/login.html")
+    public String loginPage(HttpSession session) {
+        if (session.getAttribute(AuthServerConstant.LOGIN_USER) != null) {
+            return "redirect:http://gulimall.com/";
+        }else {
+            return "login";
+        }
+    }
 }
