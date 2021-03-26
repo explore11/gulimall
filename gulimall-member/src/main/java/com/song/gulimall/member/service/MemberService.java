@@ -5,6 +5,7 @@ import com.song.common.utils.PageUtils;
 import com.song.gulimall.member.entity.MemberEntity;
 import com.song.gulimall.member.vo.MemberLoginVo;
 import com.song.gulimall.member.vo.MemberRegisterVo;
+import com.song.gulimall.member.vo.SocialUser;
 
 import java.util.Map;
 
@@ -22,5 +23,7 @@ public interface MemberService extends IService<MemberEntity> {
     void register(MemberRegisterVo registerVo);
 
     MemberEntity login(MemberLoginVo loginVo);
+
+    MemberEntity authLogin(SocialUser socialUser);
 }
 
