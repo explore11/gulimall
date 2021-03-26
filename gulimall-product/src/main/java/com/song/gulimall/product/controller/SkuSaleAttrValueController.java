@@ -1,6 +1,7 @@
 package com.song.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -30,6 +31,15 @@ import com.song.common.utils.R;
 public class SkuSaleAttrValueController {
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/getSkuSaleAttrValuesAsString")
+    public List<String> getSkuSaleAttrValuesAsString(@RequestBody Long skuId) {
+        return skuSaleAttrValueService.getSkuSaleAttrValuesAsString(skuId);
+    }
+
 
     /**
      * 列表
