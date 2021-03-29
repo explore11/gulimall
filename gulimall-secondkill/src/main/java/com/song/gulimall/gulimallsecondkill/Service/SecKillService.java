@@ -1,0 +1,16 @@
+package com.song.gulimall.gulimallsecondkill.Service;
+
+
+import com.song.gulimall.gulimallsecondkill.to.SeckillSkuRedisTo;
+
+import java.util.List;
+
+public interface SecKillService {
+    void uploadSeckillSkuLatest3Days();
+
+    List<SeckillSkuRedisTo> getCurrentSeckillSkus();
+
+    SeckillSkuRedisTo getSeckillSkuInfo(Long skuId);
+
+    String kill(String killId, String key, Integer num) throws InterruptedException;
+}

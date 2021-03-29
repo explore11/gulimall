@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
  * 订单
- * 
+ *
  * @author songwenqu
  * @email prefect_start@163.com
  * @date 2020-12-07 22:57:02
@@ -189,5 +191,7 @@ public class OrderEntity implements Serializable {
 	 * 修改时间
 	 */
 	private Date modifyTime;
+
+	List<OrderItemEntity> items;
 
 }

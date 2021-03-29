@@ -404,7 +404,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         );
         List<OrderEntity> entities = page.getRecords().stream().map(order -> {
             List<OrderItemEntity> orderItemEntities = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", order.getOrderSn()));
-//            order.setItems(orderItemEntities);
+            order.setItems(orderItemEntities);
             return order;
         }).collect(Collectors.toList());
         page.setRecords(entities);
