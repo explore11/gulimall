@@ -1,19 +1,17 @@
 package com.song.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.song.common.to.es.SkuEsModel;
+import com.song.common.utils.PageUtils;
+import com.song.common.utils.R;
+import com.song.gulimall.product.entity.SpuInfoEntity;
+import com.song.gulimall.product.service.SpuInfoService;
 import com.song.gulimall.product.vo.spu.SpuInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.song.gulimall.product.entity.SpuInfoEntity;
-import com.song.gulimall.product.service.SpuInfoService;
-import com.song.common.utils.PageUtils;
-import com.song.common.utils.R;
+import java.util.Arrays;
+import java.util.Map;
+
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 
 /**
@@ -28,6 +26,14 @@ import com.song.common.utils.R;
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
+
+
+    @RequestMapping("/skuId/{skuId}")
+    public R getSpuBySkuId(@PathVariable("skuId") Long skuId) {
+        SpuInfoEntity spuInfoEntity = spuInfoService.getSpuBySkuId(skuId);
+        return R.ok().put("data",spuInfoEntity);
+    }
+
 
     /**
      * 上架
