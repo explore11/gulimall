@@ -31,7 +31,8 @@ public class SkuItemVo {
 //    private SeckillSkuVo seckillSkuVo;
 
     private boolean hasStock = true;
-
+    //6、秒杀商品的优惠信息
+    private SeckillSkuVo seckillSkuVo;
 
 
 }

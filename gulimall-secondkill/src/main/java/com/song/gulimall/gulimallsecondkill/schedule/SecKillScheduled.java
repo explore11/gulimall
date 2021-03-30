@@ -1,6 +1,6 @@
 package com.song.gulimall.gulimallsecondkill.schedule;
 
-import io.niceseason.gulimall.seckill.Service.SecKillService;
+import com.song.gulimall.gulimallsecondkill.Service.SecKillService;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

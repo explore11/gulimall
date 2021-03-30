@@ -1,8 +1,12 @@
 package com.song.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.song.common.utils.R;
 import com.song.gulimall.product.entity.SkuImagesEntity;
 import com.song.gulimall.product.entity.SpuInfoDescEntity;
+import com.song.gulimall.product.feign.SeckillFeignService;
 import com.song.gulimall.product.service.*;
+import com.song.gulimall.product.vo.SeckillSkuVo;
 import com.song.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.song.gulimall.product.vo.SkuItemVo;
 import com.song.gulimall.product.vo.SpuItemAttrGroupVo;
@@ -40,6 +44,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     SkuSaleAttrValueService skuSaleAttrValueService;
     @Resource
     ThreadPoolExecutor executor;
+    @Resource
+    SeckillFeignService seckillFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -147,10 +153,27 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         });
 
 
-
+        //6、秒杀商品的优惠信息
+        CompletableFuture<Void> seckFuture = CompletableFuture.runAsync(() -> {
+            R r = seckillFeignService.getSeckillSkuInfo(skuId);
+            if (r.getCode() == 0) {
+                SeckillSkuVo seckillSkuVo = r.getData(new TypeReference<SeckillSkuVo>() {
+                });
+                long current = System.currentTimeMillis();
+                //如果返回结果不为空且活动未过期，设置秒杀信息
+                if (seckillSkuVo != null && current < seckillSkuVo.getEndTime()) {
+                    skuItemVo.setSeckillSkuVo(seckillSkuVo);
+                }
+            }
+        }, executor);
         // 所有任务完成后在执行
-        CompletableFuture.allOf(saleFuture,descFuture,spuAttr,skuImgFuture).get();
-
+        try {
+            CompletableFuture.allOf(saleFuture, descFuture, spuAttr, skuImgFuture, seckFuture).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return skuItemVo;
     }
 }
