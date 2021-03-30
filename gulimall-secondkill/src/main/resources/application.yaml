@@ -3,6 +3,11 @@
 #    nacos:
 #      discovery:
 #        server-addr: 127.0.0.1:8848
+#    sentinel:
+#      transport:
+#        dashboard: localhost:8999
+#        port: 8719
+#
 #  jackson:
 #    date-format: yyyy-MM-dd HH:mm:ss
 #  redis:
@@ -13,6 +18,23 @@
 #    name: gulimall-secondkill
 #  thymeleaf:
 #    cache: false
+#  rabbitmq:
+#    virtual-host: /
+#    host:
+#  zipkin:
+#    base-url: http://192.168.56.10:9411
+#    sender:
+#      type: web
+#    discovery-client-enabled: false
+#  sleuth:
+#    sampler:
+#      probability: 1
 #server:
 #  port: 6677
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: *
 #

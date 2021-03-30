@@ -56,5 +56,12 @@ public class SecKillController {
         return "success";
     }
 
+    @ResponseBody
+    @GetMapping(value = "/test")
+    public R test() {
+        System.out.println("test............");
+        return R.ok().setData("ok");
+    }
+
 
 }
